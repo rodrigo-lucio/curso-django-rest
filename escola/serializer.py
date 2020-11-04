@@ -7,12 +7,27 @@ class AlunoSerializer(serializers.ModelSerializer):
         model = Aluno
         fields = ['id', 'nome', 'rg', 'cpf', 'data_nascimento', 'email']
 
+
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Curso
         fields = '__all__'
 
+
 class MatriculaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Matricula
         exclude = []
+
+
+class ListaMatriculasAlunoSerializer(serializers.ModelSerializer):
+    curso = serializers.ReadOnlyField(
+        source='curso.descricao')           # Pega a descricao para nao mostrar mais o codigo na resposta
+    periodo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Matricula
+        fields = ['curso_id', 'curso', 'periodo']
+
+    def get_periodo(self, obj):
+        return obj.get_periodo_display()    # Exibe o periodo da mesma forma que mostra no django admin
